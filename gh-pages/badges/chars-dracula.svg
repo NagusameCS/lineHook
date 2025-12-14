@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="127" height="20">
+  <defs>
+    <linearGradient id="grad-ywlm8d89l" x2="0" y2="100%">
+      <stop offset="0" stop-color="#fff" stop-opacity=".1"/>
+      <stop offset="1" stop-opacity=".1"/>
+    </linearGradient>
+    <clipPath id="round"><rect width="127" height="20" rx="3" fill="#fff"/></clipPath>
+  </defs>
+  <g clip-path="url(#round)">
+    <rect width="76" height="20" fill="#44475a"/>
+    <rect x="76" width="51" height="20" fill="#d29922"/>
+    <rect width="127" height="20" fill="url(#grad-ywlm8d89l)"/>
+  </g>
+  <g fill="#f8f8f2" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="11">
+    <text x="38" y="15" fill="#010101" fill-opacity=".3">characters</text>
+    <text x="38" y="14">characters</text>
+    <text x="101.5" y="15" fill="#010101" fill-opacity=".3">122.6K</text>
+    <text x="101.5" y="14">122.6K</text>
+  </g>
+</svg>
