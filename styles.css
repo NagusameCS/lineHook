@@ -669,3 +669,8 @@ body {
         font-size: 0.8rem;
     }
 }
+.stack-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
