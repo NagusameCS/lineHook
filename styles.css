@@ -30,7 +30,7 @@ html {
 }
 
 body {
-    font-family: var(--font-sans);
+    font-family: var(--font-mono);
     background: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
@@ -455,7 +455,7 @@ body {
     background: none;
     border: none;
     color: var(--text-secondary);
-    font-family: var(--font-sans);
+    font-family: var(--font-mono);
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s;
@@ -669,6 +669,7 @@ body {
         font-size: 0.8rem;
     }
 }
+
 .stack-layout {
     display: flex;
     flex-direction: column;
