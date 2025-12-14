@@ -23,12 +23,13 @@ jobs:
       
       - name: Generate Stats
         run: |
-          mkdir -p .linehook/badges
-          mkdir -p gh-pages/badges
+          mkdir -p .linehook/badges .linehook/graphs
+          mkdir -p gh-pages/badges gh-pages/graphs
           linehook badge --save --type all
-          linehook graph --type summary --output .linehook/stats-card.svg
+          linehook graph --type summary --output .linehook/graphs/summary-dark.svg
           cp .linehook/badges/*.svg gh-pages/badges/
-          cp .linehook/stats-card.svg gh-pages/stats-card.svg
+          cp .linehook/graphs/*.svg gh-pages/graphs/ 2>/dev/null || true
+          cp .linehook/stats-card.svg gh-pages/stats-card.svg 2>/dev/null || true
       
       - name: Commit Stats
         run: |
