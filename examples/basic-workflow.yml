@@ -1,0 +1,56 @@
+# Example LineHook Workflow
+# Copy this file to .github/workflows/linehook.yml in your repository
+
+name: LineHook Stats
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:  # Allows manual triggering from GitHub UI
+
+jobs:
+  count-lines:
+    runs-on: ubuntu-latest
+    name: Count Lines & Update Badge
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Run LineHook
+        id: linehook
+        uses: NagusameCS/lineHook@v1
+        with:
+          gist_id: ${{ secrets.GIST_ID }}
+          gist_token: ${{ secrets.GIST_TOKEN }}
+          
+          # Optional customizations (uncomment to use):
+          
+          # Only scan specific directories
+          # directories: 'src,lib,app'
+          
+          # Only count specific file types
+          # extensions: '.js,.ts,.jsx,.tsx,.py,.go'
+          
+          # Exclude additional directories
+          # exclude_dirs: 'node_modules,.git,vendor,dist,build,coverage,test,tests,__tests__'
+          
+          # Exclude specific file patterns
+          # exclude_files: 'package-lock.json,yarn.lock,*.min.js,*.min.css,*.map'
+          
+          # Badge appearance
+          # badge_label: 'lines of code'
+          # badge_color: 'blue'
+          # badge_style: 'flat'
+      
+      # Optional: Use the outputs in subsequent steps
+      - name: Display Stats
+        run: |
+          echo "📊 Repository Statistics:"
+          echo "  Lines: ${{ steps.linehook.outputs.lines }}"
+          echo "  Characters: ${{ steps.linehook.outputs.characters }}"
+          echo "  Files: ${{ steps.linehook.outputs.files }}"
+          echo "  Code Lines: ${{ steps.linehook.outputs.code_lines }}"
+          echo "  Blank Lines: ${{ steps.linehook.outputs.blank_lines }}"

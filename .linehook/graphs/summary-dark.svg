@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" width="300" height="200">
+  <style>
+    text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; }
+  </style>
+  <rect width="100%" height="100%" fill="#0d1117" rx="8"/>
+  <rect width="100%" height="100%" fill="none" stroke="#30363d" stroke-width="1" rx="8"/>
+  <text x="20" y="28" font-size="14" font-weight="bold" fill="#e6edf3">📊 Project Stats</text>
+  
+    <text x="20" y="55" font-size="24" font-weight="bold" fill="#58a6ff">3.9K</text>
+    <text x="20" y="73" font-size="11" fill="#8b949e">Total Lines</text>
+    <text x="170" y="55" font-size="24" font-weight="bold" fill="#3fb950">3.4K</text>
+    <text x="170" y="73" font-size="11" fill="#8b949e">Code Lines</text>
+    <text x="20" y="105" font-size="24" font-weight="bold" fill="#a371f7">21</text>
+    <text x="20" y="123" font-size="11" fill="#8b949e">Files</text>
+    <text x="170" y="105" font-size="24" font-weight="bold" fill="#d29922">122.8K</text>
+    <text x="170" y="123" font-size="11" fill="#8b949e">Characters</text>
+    <text x="20" y="155" font-size="24" font-weight="bold" fill="#f778ba">0</text>
+    <text x="20" y="173" font-size="11" fill="#8b949e">Assets</text>
+    <text x="170" y="155" font-size="24" font-weight="bold" fill="#39c5cf">0</text>
+    <text x="170" y="173" font-size="11" fill="#8b949e">Pages</text>
+</svg>

@@ -1,0 +1,31 @@
+# Scheduled Update Example
+# Update stats on a schedule (useful for large projects)
+
+name: LineHook - Scheduled
+
+on:
+  # Update every day at midnight UTC
+  schedule:
+    - cron: '0 0 * * *'
+  
+  # Also update on push to main
+  push:
+    branches: [main, master]
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  count-lines:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Fetch full history for accurate stats
+          fetch-depth: 0
+      
+      - name: Count Lines
+        uses: NagusameCS/lineHook@v1
+        with:
+          gist_id: ${{ secrets.GIST_ID }}
+          gist_token: ${{ secrets.GIST_TOKEN }}

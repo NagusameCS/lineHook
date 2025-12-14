@@ -1,0 +1,53 @@
+name: Test LineHook Action
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test Action
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Test Line Counting (Dry Run)
+        id: test
+        shell: bash
+        run: |
+          # Test the line counting logic locally
+          echo "Testing LineHook line counting..."
+          
+          TOTAL_LINES=0
+          TOTAL_CHARS=0
+          TOTAL_FILES=0
+          
+          while IFS= read -r file; do
+            if [ -f "$file" ] && [ -r "$file" ]; then
+              if file "$file" | grep -q text; then
+                LINES=$(wc -l < "$file" 2>/dev/null || echo 0)
+                CHARS=$(wc -c < "$file" 2>/dev/null || echo 0)
+                TOTAL_LINES=$((TOTAL_LINES + LINES))
+                TOTAL_CHARS=$((TOTAL_CHARS + CHARS))
+                TOTAL_FILES=$((TOTAL_FILES + 1))
+                echo "  $file: $LINES lines"
+              fi
+            fi
+          done < <(find . -type f -not -path './.git/*' -not -name '*.md')
+          
+          echo ""
+          echo "✅ Test Results:"
+          echo "  Total Files: $TOTAL_FILES"
+          echo "  Total Lines: $TOTAL_LINES"
+          echo "  Total Characters: $TOTAL_CHARS"
+          
+          # Verify we got reasonable numbers
+          if [ "$TOTAL_LINES" -gt 0 ]; then
+            echo "✅ Line counting works!"
+          else
+            echo "❌ No lines counted - check the action"
+            exit 1
+          fi

@@ -1,0 +1,31 @@
+# Python Project Example
+# Optimized for Python codebases
+
+name: LineHook - Python
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  count-lines:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Count Python Lines
+        uses: NagusameCS/lineHook@v1
+        with:
+          gist_id: ${{ secrets.GIST_ID }}
+          gist_token: ${{ secrets.GIST_TOKEN }}
+          
+          # Python-specific settings
+          extensions: '.py,.pyi,.pyx,.pxd'
+          
+          exclude_dirs: '__pycache__,.git,.venv,venv,env,.env,.tox,.pytest_cache,.mypy_cache,build,dist,*.egg-info,.eggs'
+          
+          exclude_files: 'setup.py,conftest.py'
+          
+          badge_label: 'Python lines'
+          badge_color: '3776ab'  # Python blue

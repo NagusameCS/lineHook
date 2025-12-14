@@ -1,0 +1,290 @@
+name: 'LineHook'
+description: 'Dynamic line & character count badges for your GitHub projects. Display live code statistics anywhere!'
+author: 'NagusameCS'
+
+branding:
+  icon: 'bar-chart-2'
+  color: 'blue'
+
+inputs:
+  gist_id:
+    description: 'The ID of the gist to update with line count data'
+    required: true
+  gist_token:
+    description: 'GitHub token with gist scope for updating the gist'
+    required: true
+  directories:
+    description: 'Comma-separated list of directories to scan (default: entire repo)'
+    required: false
+    default: '.'
+  extensions:
+    description: 'Comma-separated list of file extensions to include (e.g., .js,.py,.ts). Leave empty for all files'
+    required: false
+    default: ''
+  exclude_dirs:
+    description: 'Comma-separated directories to exclude'
+    required: false
+    default: 'node_modules,.git,vendor,dist,build,__pycache__,.venv,venv,.next,.nuxt,coverage,.nyc_output'
+  exclude_files:
+    description: 'Comma-separated file patterns to exclude'
+    required: false
+    default: 'package-lock.json,yarn.lock,pnpm-lock.yaml,*.min.js,*.min.css,*.map'
+  count_blank_lines:
+    description: 'Whether to count blank lines (true/false)'
+    required: false
+    default: 'true'
+  badge_label:
+    description: 'Custom label for the badge'
+    required: false
+    default: 'lines of code'
+  badge_color:
+    description: 'Badge color (hex without # or named color)'
+    required: false
+    default: 'blue'
+  badge_style:
+    description: 'Badge style (flat, flat-square, plastic, for-the-badge, social)'
+    required: false
+    default: 'flat'
+
+outputs:
+  lines:
+    description: 'Total line count'
+    value: ${{ steps.count.outputs.lines }}
+  characters:
+    description: 'Total character count'
+    value: ${{ steps.count.outputs.characters }}
+  files:
+    description: 'Total file count'
+    value: ${{ steps.count.outputs.files }}
+  blank_lines:
+    description: 'Total blank line count'
+    value: ${{ steps.count.outputs.blank_lines }}
+  code_lines:
+    description: 'Non-blank line count'
+    value: ${{ steps.count.outputs.code_lines }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Count lines and characters
+      id: count
+      shell: bash
+      run: |
+        # LineHook - Efficient line counting
+        
+        DIRECTORIES="${{ inputs.directories }}"
+        EXTENSIONS="${{ inputs.extensions }}"
+        EXCLUDE_DIRS="${{ inputs.exclude_dirs }}"
+        EXCLUDE_FILES="${{ inputs.exclude_files }}"
+        COUNT_BLANK="${{ inputs.count_blank_lines }}"
+        
+        # Build find command with exclusions
+        FIND_CMD="find $DIRECTORIES -type f"
+        
+        # Add directory exclusions
+        IFS=',' read -ra EXCL_DIRS <<< "$EXCLUDE_DIRS"
+        for dir in "${EXCL_DIRS[@]}"; do
+          dir=$(echo "$dir" | xargs)  # trim whitespace
+          if [ -n "$dir" ]; then
+            FIND_CMD="$FIND_CMD -not -path '*/$dir/*' -not -path './$dir/*'"
+          fi
+        done
+        
+        # Add file exclusions
+        IFS=',' read -ra EXCL_FILES <<< "$EXCLUDE_FILES"
+        for pattern in "${EXCL_FILES[@]}"; do
+          pattern=$(echo "$pattern" | xargs)
+          if [ -n "$pattern" ]; then
+            FIND_CMD="$FIND_CMD -not -name '$pattern'"
+          fi
+        done
+        
+        # Add extension filter if specified
+        if [ -n "$EXTENSIONS" ]; then
+          EXT_FILTER=""
+          IFS=',' read -ra EXTS <<< "$EXTENSIONS"
+          for ext in "${EXTS[@]}"; do
+            ext=$(echo "$ext" | xargs)
+            if [ -n "$ext" ]; then
+              if [ -n "$EXT_FILTER" ]; then
+                EXT_FILTER="$EXT_FILTER -o -name '*$ext'"
+              else
+                EXT_FILTER="-name '*$ext'"
+              fi
+            fi
+          done
+          if [ -n "$EXT_FILTER" ]; then
+            FIND_CMD="$FIND_CMD \( $EXT_FILTER \)"
+          fi
+        fi
+        
+        echo "Executing: $FIND_CMD"
+        
+        # Execute and count
+        FILES=$(eval "$FIND_CMD" 2>/dev/null | head -10000)
+        FILE_COUNT=$(echo "$FILES" | grep -c . || echo 0)
+        
+        TOTAL_LINES=0
+        TOTAL_CHARS=0
+        BLANK_LINES=0
+        
+        while IFS= read -r file; do
+          if [ -f "$file" ] && [ -r "$file" ]; then
+            # Check if it's a text file (not binary)
+            if file "$file" | grep -q text; then
+              LINES=$(wc -l < "$file" 2>/dev/null || echo 0)
+              CHARS=$(wc -c < "$file" 2>/dev/null || echo 0)
+              BLANKS=$(grep -c '^[[:space:]]*$' "$file" 2>/dev/null || echo 0)
+              
+              TOTAL_LINES=$((TOTAL_LINES + LINES))
+              TOTAL_CHARS=$((TOTAL_CHARS + CHARS))
+              BLANK_LINES=$((BLANK_LINES + BLANKS))
+            fi
+          fi
+        done <<< "$FILES"
+        
+        CODE_LINES=$((TOTAL_LINES - BLANK_LINES))
+        
+        # Format numbers with commas for display
+        format_number() {
+          echo "$1" | sed ':a;s/\B[0-9]\{3\}\>/,&/;ta'
+        }
+        
+        LINES_DISPLAY=$(format_number $TOTAL_LINES)
+        CHARS_DISPLAY=$(format_number $TOTAL_CHARS)
+        CODE_LINES_DISPLAY=$(format_number $CODE_LINES)
+        
+        echo "Total Lines: $TOTAL_LINES"
+        echo "Total Characters: $TOTAL_CHARS"
+        echo "Blank Lines: $BLANK_LINES"
+        echo "Code Lines: $CODE_LINES"
+        echo "Files Scanned: $FILE_COUNT"
+        
+        # Set outputs
+        echo "lines=$TOTAL_LINES" >> $GITHUB_OUTPUT
+        echo "lines_display=$LINES_DISPLAY" >> $GITHUB_OUTPUT
+        echo "characters=$TOTAL_CHARS" >> $GITHUB_OUTPUT
+        echo "characters_display=$CHARS_DISPLAY" >> $GITHUB_OUTPUT
+        echo "files=$FILE_COUNT" >> $GITHUB_OUTPUT
+        echo "blank_lines=$BLANK_LINES" >> $GITHUB_OUTPUT
+        echo "code_lines=$CODE_LINES" >> $GITHUB_OUTPUT
+        echo "code_lines_display=$CODE_LINES_DISPLAY" >> $GITHUB_OUTPUT
+
+    - name: Update Gist with badge data
+      shell: bash
+      env:
+        GIST_TOKEN: ${{ inputs.gist_token }}
+        GIST_ID: ${{ inputs.gist_id }}
+      run: |
+        # Create JSON for shields.io endpoint badge
+        LINES="${{ steps.count.outputs.lines }}"
+        LINES_DISPLAY="${{ steps.count.outputs.lines_display }}"
+        CHARS="${{ steps.count.outputs.characters }}"
+        CHARS_DISPLAY="${{ steps.count.outputs.characters_display }}"
+        CODE_LINES="${{ steps.count.outputs.code_lines }}"
+        CODE_LINES_DISPLAY="${{ steps.count.outputs.code_lines_display }}"
+        FILES="${{ steps.count.outputs.files }}"
+        BLANK_LINES="${{ steps.count.outputs.blank_lines }}"
+        BADGE_LABEL="${{ inputs.badge_label }}"
+        BADGE_COLOR="${{ inputs.badge_color }}"
+        BADGE_STYLE="${{ inputs.badge_style }}"
+        REPO_NAME="${GITHUB_REPOSITORY##*/}"
+        
+        # Create the JSON files for different badge types
+        # Main lines badge
+        LINES_JSON=$(cat <<EOF
+        {
+          "schemaVersion": 1,
+          "label": "$BADGE_LABEL",
+          "message": "$LINES_DISPLAY",
+          "color": "$BADGE_COLOR",
+          "style": "$BADGE_STYLE"
+        }
+        EOF
+        )
+        
+        # Characters badge
+        CHARS_JSON=$(cat <<EOF
+        {
+          "schemaVersion": 1,
+          "label": "characters",
+          "message": "$CHARS_DISPLAY",
+          "color": "$BADGE_COLOR",
+          "style": "$BADGE_STYLE"
+        }
+        EOF
+        )
+        
+        # Code lines (non-blank) badge
+        CODE_JSON=$(cat <<EOF
+        {
+          "schemaVersion": 1,
+          "label": "code lines",
+          "message": "$CODE_LINES_DISPLAY",
+          "color": "$BADGE_COLOR",
+          "style": "$BADGE_STYLE"
+        }
+        EOF
+        )
+        
+        # Full stats JSON
+        STATS_JSON=$(cat <<EOF
+        {
+          "schemaVersion": 1,
+          "label": "$BADGE_LABEL",
+          "message": "$LINES_DISPLAY",
+          "color": "$BADGE_COLOR",
+          "style": "$BADGE_STYLE",
+          "stats": {
+            "lines": $LINES,
+            "characters": $CHARS,
+            "codeLines": $CODE_LINES,
+            "blankLines": $BLANK_LINES,
+            "files": $FILES,
+            "repository": "$GITHUB_REPOSITORY",
+            "updatedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+        }
+        EOF
+        )
+        
+        # Update gist with all badge files
+        GIST_FILES=$(cat <<EOF
+        {
+          "files": {
+            "${REPO_NAME}-lines.json": {
+              "content": $(echo "$LINES_JSON" | jq -c '.')
+            },
+            "${REPO_NAME}-chars.json": {
+              "content": $(echo "$CHARS_JSON" | jq -c '.')
+            },
+            "${REPO_NAME}-code.json": {
+              "content": $(echo "$CODE_JSON" | jq -c '.')
+            },
+            "${REPO_NAME}-stats.json": {
+              "content": $(echo "$STATS_JSON" | jq -c '.')
+            }
+          }
+        }
+        EOF
+        )
+        
+        # Update the gist
+        curl -s -X PATCH \
+          -H "Authorization: token $GIST_TOKEN" \
+          -H "Accept: application/vnd.github.v3+json" \
+          "https://api.github.com/gists/$GIST_ID" \
+          -d "$GIST_FILES"
+        
+        echo "✅ Gist updated successfully!"
+        echo ""
+        echo "🏷️  Your badge URLs:"
+        echo ""
+        echo "Lines Badge:"
+        echo "https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/${GITHUB_REPOSITORY_OWNER}/${GIST_ID}/raw/${REPO_NAME}-lines.json"
+        echo ""
+        echo "Characters Badge:"
+        echo "https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/${GITHUB_REPOSITORY_OWNER}/${GIST_ID}/raw/${REPO_NAME}-chars.json"
+        echo ""
+        echo "Code Lines Badge:"
+        echo "https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/${GITHUB_REPOSITORY_OWNER}/${GIST_ID}/raw/${REPO_NAME}-code.json"

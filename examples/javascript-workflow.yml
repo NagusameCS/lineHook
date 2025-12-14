@@ -1,0 +1,31 @@
+# JavaScript/TypeScript Project Example
+# Optimized for Node.js, React, Vue, Next.js, etc.
+
+name: LineHook - JavaScript
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  count-lines:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Count JS/TS Lines
+        uses: NagusameCS/lineHook@v1
+        with:
+          gist_id: ${{ secrets.GIST_ID }}
+          gist_token: ${{ secrets.GIST_TOKEN }}
+          
+          # JavaScript/TypeScript settings
+          extensions: '.js,.jsx,.ts,.tsx,.mjs,.cjs,.vue,.svelte'
+          
+          exclude_dirs: 'node_modules,.git,dist,build,.next,.nuxt,.output,coverage,.nyc_output,.cache'
+          
+          exclude_files: 'package-lock.json,yarn.lock,pnpm-lock.yaml,*.min.js,*.min.css,*.bundle.js,*.chunk.js,*.map'
+          
+          badge_label: 'JS/TS lines'
+          badge_color: 'f7df1e'  # JavaScript yellow
