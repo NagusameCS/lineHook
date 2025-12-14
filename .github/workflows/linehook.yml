@@ -1,0 +1,39 @@
+name: Update LineHook Stats
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install LineHook
+        run: npm install -g linehook
+      
+      - name: Generate Stats
+        run: |
+          mkdir -p .linehook/badges
+          mkdir -p gh-pages/badges
+          linehook badge --save --type all
+          linehook graph --type summary --output .linehook/stats-card.svg
+          cp .linehook/badges/*.svg gh-pages/badges/
+          cp .linehook/stats-card.svg gh-pages/stats-card.svg
+      
+      - name: Commit Stats
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .linehook/ gh-pages/
+          git diff --staged --quiet || git commit -m "Update LineHook stats [skip ci]"
+          git push
