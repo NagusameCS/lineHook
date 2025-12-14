@@ -9,7 +9,7 @@ const chalk = require('chalk');
 const ora = require('ora');
 const inquirer = require('inquirer');
 
-const GITHUB_ACTION_TEMPLATE = `name: LineHook Stats
+const GITHUB_ACTION_TEMPLATE = `name: Update LineHook Stats
 
 on:
   push:
@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  stats:
+  update-stats:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -34,8 +34,8 @@ jobs:
       
       - name: Generate Stats
         run: |
-          linehook stats --output json > .linehook/stats.json
-          linehook badge --save
+          mkdir -p .linehook/badges
+          linehook badge --save --type all
           linehook graph --type summary --output .linehook/stats-card.svg
       
       - name: Commit Stats
@@ -43,7 +43,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .linehook/
-          git diff --staged --quiet || git commit -m "Update LineHook stats"
+          git diff --staged --quiet || git commit -m "Update LineHook stats [skip ci]"
           git push
 `;
 
@@ -103,7 +103,7 @@ async function selectMode(options) {
     // If flags provided, skip interactive
     if (options.offline) return 'offline';
     if (options.auto || options.githubAction) return 'auto';
-    if (options.yes) return 'offline'; // Default for non-interactive
+    if (options.yes) return 'auto'; // Default for non-interactive is now AUTO
 
     displayModeInfo();
 
@@ -114,17 +114,17 @@ async function selectMode(options) {
             message: 'Select update mode:',
             choices: [
                 {
+                    name: 'Auto - GitHub Actions (updates on every push) [Recommended]',
+                    value: 'auto',
+                    short: 'Auto'
+                },
+                {
                     name: 'Offline - Manual updates (static files, always work)',
                     value: 'offline',
                     short: 'Offline'
-                },
-                {
-                    name: 'Auto - GitHub Actions (updates on every push)',
-                    value: 'auto',
-                    short: 'Auto'
                 }
             ],
-            default: 'offline'
+            default: 'auto'
         }
     ]);
 
