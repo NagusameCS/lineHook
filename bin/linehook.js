@@ -82,6 +82,7 @@ ${chalk.blue('╦   ╦ ╔╗╔ ╔═╗ ╦ ╦ ╔═╗ ╔═╗ ╦╔�
 ${chalk.blue('║   ║ ║║║ ║╣  ╠═╣ ║ ║ ║ ║ ╠╩╗')}
 ${chalk.blue('╩═╝ ╩ ╝╚╝ ╚═╝ ╩ ╩ ╚═╝ ╚═╝ ╩ ╩')}
 ${chalk.gray('Dynamic code stats for any project')}
+${chalk.italic.gray("What's a line without a hook?")}
 `;
 
 // Available themes for help text

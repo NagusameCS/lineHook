@@ -1,7 +1,7 @@
 {
     "name": "linehook",
     "version": "1.0.3",
-    "description": "Dynamic code statistics, badges, and graphs for any project. Count lines, files, assets, and more.",
+    "description": "Dynamic code statistics, badges, and graphs for any project. What's a line without a hook?",
     "main": "src/index.js",
     "bin": {
         "linehook": "./bin/linehook.js",
