@@ -6,13 +6,14 @@
 
 <p align="center">
   <strong>Dynamic code statistics, badges, and graphs for any project</strong><br>
-  <em>One command. All the stats. Anywhere you need them.</em>
+  <em>What's a line without a hook?</em>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/install-npm%20i%20--g%20linehook-green?style=flat-square" alt="Install"/>
-  <img src="https://img.shields.io/badge/zero-server%20costs-blue?style=flat-square" alt="Zero Server Costs"/>
-  <img src="https://img.shields.io/badge/works-offline-orange?style=flat-square" alt="Works Offline"/>
+  <a href="https://www.npmjs.com/package/linehook"><img src="https://img.shields.io/npm/v/linehook?color=blue&style=flat-square" alt="npm version"/></a>
+  <a href="https://www.npmjs.com/package/linehook"><img src="https://img.shields.io/npm/dm/linehook?style=flat-square" alt="npm downloads"/></a>
+  <a href="https://github.com/marketplace/actions/linehook"><img src="https://img.shields.io/badge/GitHub%20Action-Marketplace-blue?style=flat-square&logo=github" alt="GitHub Action"/></a>
+  <img src="https://img.shields.io/badge/zero-server%20costs-green?style=flat-square" alt="Zero Server Costs"/>
 </p>
 
 ---
