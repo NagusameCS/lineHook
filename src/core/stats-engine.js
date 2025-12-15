@@ -134,9 +134,33 @@ class StatsEngine {
         this.extensions = options.extensions ? options.extensions.split(',').map(e => e.trim()) : null;
         this.excludeDirs = options.exclude
             ? options.exclude.split(',').map(e => e.trim())
-            : DEFAULT_EXCLUDES;
+            : [...DEFAULT_EXCLUDES]; // Copy to avoid mutating default
+        
         this.includeHidden = options.includeHidden || false;
         this.pagesDir = options.pagesDir ? path.resolve(options.pagesDir) : null;
+
+        // Load .linehookignore if it exists
+        this.loadIgnoreFile();
+    }
+
+    /**
+     * Load patterns from .linehookignore
+     */
+    loadIgnoreFile() {
+        const ignorePath = path.join(this.rootDir, '.linehookignore');
+        if (fs.existsSync(ignorePath)) {
+            try {
+                const content = fs.readFileSync(ignorePath, 'utf8');
+                const lines = content.split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line && !line.startsWith('#')); // Skip empty lines and comments
+                
+                // Add to exclude dirs
+                this.excludeDirs.push(...lines);
+            } catch (e) {
+                // Ignore read errors
+            }
+        }
     }
 
     /**
