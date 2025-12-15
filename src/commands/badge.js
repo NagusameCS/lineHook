@@ -42,7 +42,13 @@ async function badgeCommand(options) {
         }
 
         // Get stats first
-        const engine = new StatsEngine({});
+        const engine = new StatsEngine({
+            dir: options.dir || '.',
+            extensions: options.extensions,
+            exclude: options.exclude,
+            includeHidden: options.includeHidden,
+            pagesDir: options.pagesDir
+        });
         const stats = await engine.analyze();
 
         const generator = new BadgeGenerator({

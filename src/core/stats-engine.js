@@ -136,6 +136,7 @@ class StatsEngine {
             ? options.exclude.split(',').map(e => e.trim())
             : DEFAULT_EXCLUDES;
         this.includeHidden = options.includeHidden || false;
+        this.pagesDir = options.pagesDir ? path.resolve(options.pagesDir) : null;
     }
 
     /**
@@ -205,6 +206,14 @@ class StatsEngine {
      * Check if file is an index/page file
      */
     isPageFile(filePath) {
+        // If pagesDir is specified, file must be inside it
+        if (this.pagesDir) {
+            const absolutePath = path.resolve(filePath);
+            if (!absolutePath.startsWith(this.pagesDir)) {
+                return false;
+            }
+        }
+
         const basename = path.basename(filePath).toLowerCase();
         const pagePatterns = [
             'index.html', 'index.htm', 'index.php', 'index.jsx', 'index.tsx',

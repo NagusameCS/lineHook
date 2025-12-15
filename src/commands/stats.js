@@ -172,7 +172,8 @@ async function statsCommand(options) {
             dir: options.dir || '.',
             extensions: options.extensions,
             exclude: options.exclude,
-            includeHidden: options.includeHidden
+            includeHidden: options.includeHidden,
+            pagesDir: options.pagesDir
         });
 
         const stats = await engine.analyze();
