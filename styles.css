@@ -675,3 +675,9 @@ body {
     flex-direction: column;
     gap: 2rem;
 }
+.icon {
+    display: inline-block;
+    vertical-align: text-bottom;
+    margin-right: 0.3em;
+    fill: currentColor;
+}
