@@ -1,6 +1,6 @@
 {
     "name": "linehook",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Dynamic code statistics, badges, and graphs for any project. Count lines, files, assets, and more.",
     "main": "src/index.js",
     "bin": {
