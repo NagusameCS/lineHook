@@ -1,0 +1,5 @@
+# LineHook Ignore File
+# Add patterns to exclude from statistics
+
+gh-pages
+.linehook
