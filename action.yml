@@ -45,6 +45,10 @@ inputs:
     description: 'Badge style (flat, flat-square, plastic, for-the-badge, social)'
     required: false
     default: 'flat'
+  auto_pull:
+    description: 'Pull before pushing to avoid conflicts with out-of-sync SVGs (true/false)'
+    required: false
+    default: 'true'
 
 outputs:
   lines:

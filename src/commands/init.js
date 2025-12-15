@@ -44,12 +44,14 @@ jobs:
           git config --local user.name "GitHub Action"
           git add .linehook/
           git diff --staged --quiet || git commit -m "Update LineHook stats [skip ci]"
+          git pull --rebase
           git push
 `;
 
 const LINEHOOK_CONFIG_TEMPLATE = {
     version: '1.0.0',
     mode: 'offline',  // 'offline' or 'auto'
+    autoPull: true,   // Pull before push to avoid SVG conflicts
     directories: ['.'],
     extensions: [],
     exclude: [

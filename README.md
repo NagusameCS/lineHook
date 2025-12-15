@@ -344,6 +344,7 @@ linehook badge --save
 linehook graph --type summary -o .linehook/stats.svg
 git add .linehook/
 git commit -m "Update stats"
+git pull --rebase  # Sync remote changes first (avoids SVG conflicts)
 git push
 ```
 
@@ -368,10 +369,13 @@ This creates `.github/workflows/linehook.yml` which:
 
 **Key Point:** This is NOT a webhook that requires your computer to be on. GitHub Actions runs on GitHub's infrastructure - it's always available and completely free for public repos.
 
+**Auto Pull Feature:** By default, LineHook pulls before pushing to avoid conflicts when SVGs are out of sync (e.g., from concurrent pushes). This is enabled by default in the generated workflows. To disable it, remove the `git pull --rebase` line from your workflow.
+
 **Pros:**
 - Fully automatic - stats update on every push
 - Runs on GitHub's servers (free, always-on)
 - No external services or API keys needed
+- Auto-sync prevents SVG conflicts
 
 ### Local Development Server
 
@@ -543,6 +547,7 @@ jobs:
           git config user.email "action@github.com"
           git add .linehook/
           git diff --staged --quiet || git commit -m "Update stats"
+          git pull --rebase  # Sync remote changes (avoids SVG conflicts)
           git push
 ```
 
