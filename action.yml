@@ -1,5 +1,5 @@
 name: 'LineHook'
-description: "Dynamic line & character count badges for your GitHub projects. Display live code statistics anywhere! What's a line without a hook?"
+description: "Dynamic line & character count badges for your GitHub projects. Display live code statistics anywhere!"
 author: 'NagusameCS'
 
 branding:
