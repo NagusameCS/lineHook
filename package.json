@@ -1,6 +1,6 @@
 {
     "name": "linehook",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Dynamic code statistics, badges, and graphs for any project. What's a line without a hook?",
     "main": "src/index.js",
     "bin": {

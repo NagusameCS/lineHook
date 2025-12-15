@@ -13,6 +13,7 @@ const https = require('https');
 // Import commands
 const statsCommand = require('../src/commands/stats');
 const initCommand = require('../src/commands/init');
+const uninstallCommand = require('../src/commands/uninstall');
 const badgeCommand = require('../src/commands/badge');
 const webhookCommand = require('../src/commands/webhook');
 const graphCommand = require('../src/commands/graph');
@@ -121,6 +122,15 @@ program
     .option('-y, --yes', 'Skip prompts and use defaults')
     .option('--theme <name>', `Default theme for badges/graphs`, 'default')
     .action(initCommand);
+
+// Uninstall command - remove LineHook from a project
+program
+    .command('uninstall')
+    .alias('u')
+    .description('Remove LineHook from your project')
+    .option('-y, --yes', 'Skip confirmation prompt')
+    .option('--keep-global', 'Do not show global uninstall hint')
+    .action(uninstallCommand);
 
 // Badge command - generate badge URLs/SVGs
 program
