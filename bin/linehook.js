@@ -38,12 +38,12 @@ function checkForUpdates() {
             try {
                 const latest = JSON.parse(data).version;
                 const current = packageJson.version;
-                
+
                 if (latest && latest !== current) {
                     // Compare versions
                     const latestParts = latest.split('.').map(Number);
                     const currentParts = current.split('.').map(Number);
-                    
+
                     let isNewer = false;
                     for (let i = 0; i < 3; i++) {
                         if (latestParts[i] > currentParts[i]) {
@@ -53,10 +53,10 @@ function checkForUpdates() {
                             break;
                         }
                     }
-                    
+
                     if (isNewer) {
                         console.log();
-                        console.log(chalk.yellow('  Update available: ') + 
+                        console.log(chalk.yellow('  Update available: ') +
                             chalk.gray(current) + chalk.yellow(' -> ') + chalk.green(latest));
                         console.log(chalk.gray('  Run ') + chalk.cyan('npm update -g linehook') + chalk.gray(' to update'));
                         console.log();
@@ -68,7 +68,7 @@ function checkForUpdates() {
         });
     });
 
-    req.on('error', () => {}); // Silently ignore network errors
+    req.on('error', () => { }); // Silently ignore network errors
     req.on('timeout', () => req.destroy());
     req.end();
 }
