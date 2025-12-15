@@ -8,6 +8,7 @@
 const { program } = require('commander');
 const chalk = require('chalk');
 const path = require('path');
+const https = require('https');
 
 // Import commands
 const statsCommand = require('../src/commands/stats');
@@ -18,6 +19,62 @@ const graphCommand = require('../src/commands/graph');
 const themeCommand = require('../src/commands/theme');
 
 const packageJson = require('../package.json');
+
+/**
+ * Check for package updates (non-blocking)
+ */
+function checkForUpdates() {
+    const options = {
+        hostname: 'registry.npmjs.org',
+        path: '/linehook/latest',
+        method: 'GET',
+        timeout: 2000
+    };
+
+    const req = https.request(options, (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => {
+            try {
+                const latest = JSON.parse(data).version;
+                const current = packageJson.version;
+                
+                if (latest && latest !== current) {
+                    // Compare versions
+                    const latestParts = latest.split('.').map(Number);
+                    const currentParts = current.split('.').map(Number);
+                    
+                    let isNewer = false;
+                    for (let i = 0; i < 3; i++) {
+                        if (latestParts[i] > currentParts[i]) {
+                            isNewer = true;
+                            break;
+                        } else if (latestParts[i] < currentParts[i]) {
+                            break;
+                        }
+                    }
+                    
+                    if (isNewer) {
+                        console.log();
+                        console.log(chalk.yellow('  Update available: ') + 
+                            chalk.gray(current) + chalk.yellow(' -> ') + chalk.green(latest));
+                        console.log(chalk.gray('  Run ') + chalk.cyan('npm update -g linehook') + chalk.gray(' to update'));
+                        console.log();
+                    }
+                }
+            } catch (e) {
+                // Ignore parse errors
+            }
+        });
+    });
+
+    req.on('error', () => {}); // Silently ignore network errors
+    req.on('timeout', () => req.destroy());
+    req.end();
+}
+
+// Check for updates in background (don't block CLI)
+checkForUpdates();
 
 // ASCII Banner
 const banner = `
