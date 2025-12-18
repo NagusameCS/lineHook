@@ -16,6 +16,17 @@
   <img src="https://img.shields.io/badge/zero-server%20costs-green?style=flat-square" alt="Zero Server Costs"/>
 </p>
 
+<p align="center">
+  <img src=".linehook/badges/lines.svg" alt="Lines of Code"/>
+  <img src=".linehook/badges/code.svg" alt="Code Lines"/>
+  <img src=".linehook/badges/files.svg" alt="Files"/>
+  <img src=".linehook/badges/languages.svg" alt="Languages"/>
+</p>
+
+<p align="center">
+  <img src=".linehook/stats-card.svg" alt="LineHook Stats" width="400"/>
+</p>
+
 ---
 
 ## Quick Start
